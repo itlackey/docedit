@@ -9,19 +9,26 @@
     <script src="bower_components/jqueryui/jquery-ui.min.js"></script>
     <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="bower_components/knockout-sortable/build/knockout-sortable.js"></script>
+    <script src="bower_components/knockout-mapping/knockout.mapping.js"></script>
     <style>
+        
+        pre{
+            width: 90%;
+        }
+
         .draggable-list-item {
             cursor: pointer;
             z-index: 1001;
         }
 
         .drop-list-group {
-            padding: 50px;
+            /*padding: 50px;*/
+            padding-top: 250px;
             background-color: #808080;
         }
     </style>
 </head>
-<body>
+<body class="container">
     <div class="row">
         <div class="col-md-2">
             <div class="panel panel-default">
@@ -31,17 +38,16 @@
                         <li class="list-group-item draggable-list-item" data-bind="draggable: $data"><span data-bind="text: title"></span></li>
                     </ul>
                 </div>
-
             </div>
         </div>
         <div class="col-md-10">
             <div class="panel panel-success">
                 <div class="panel-heading"><h3 class="panel-title">Selected Sections</h3></div>
-                <div class="panel-body">
+                <div class="panel-body" style="padding: 0">
                     <ul id="selectedSections" data-bind="sortable: { data: selectedSections, dragged: itemDragged}" class="list-group drop-list-group" style="margin: 5px; padding: 5px;">
                         <li class="list-group-item">
                             <span data-bind="text: title"></span>
-                            <button data-bind="visible: editable, click: $root.editItem">edit</button>
+                            <button class="pull-right" data-bind="visible: editable, click: $root.editItem">edit</button>
                         </li>
                     </ul>
                 </div>
@@ -58,11 +64,10 @@
                     <input type="text" class="form-control" data-bind="visible: canChangeTitle, value: title" />
                 </div>
                 <div class="modal-body">
-                    <textarea class="form-control" data-bind="value: sectionData"></textarea>
+                    <textarea class="form-control" data-bind="value: sectionText"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>                    
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -78,58 +83,108 @@
                     <input type="text" data-bind="visible: canChangeTitle, value: title" />
                 </div>
                 <div class="modal-body">
-                    <input type="checkbox"  value="Item 1" />
+                    <ul data-bind="foreach: sectionItems">
+                        <li>
+                            <input type="checkbox" data-bind="checked: $data.IsSelected" />
+                            <span data-bind="text: $data.Name"></span>
+                        </li>
+                    </ul>               
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>                    
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+  
 
     <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
     <script>
 
-        function SectionViewModel(title, editor, canChangeTitle, sectionData) {
+        function SectionItemViewModel(id, name) {
+            this.Id = id;
+            this.Name = name;
+            this.IsSelected = ko.observable(false);
+        }
+
+        function SectionViewModel(title, editor, canChangeTitle, sectionText) {
             if (canChangeTitle == null)
                 canChangeTitle = false;
 
             this.title = ko.observable(title);
             this.editor = editor;
             this.editable = editor != null;
-            this.sectionData = ko.observable(sectionData);
+            this.sectionText = ko.observable(sectionText);
             this.canChangeTitle = ko.observable(canChangeTitle);
+
+            this.sectionItems = ko.observableArray([]);
+
         }
 
         function DocViewModel() {
             var self = this;
+
+            function createSectionViewModel(item) {
+
+                var newItem = new SectionViewModel(item.title(), item.editor, item.canChangeTitle(), item.sectionText());
+
+                if (item.sectionItems != null) {
+
+                    var sectionItems = item.sectionItems();
+
+                    for (var i = 0; i < sectionItems.length; i++) {
+                        var sectionItem = sectionItems[i];
+
+                        newItem.sectionItems.push(
+                            new SectionItemViewModel(sectionItem.Id,  sectionItem.Name)
+                        );
+                    }
+                }
+                    //newItem.sectionItems(item.sectionItems());
+
+                return newItem;
+
+            }
+
+            var selectedPubs = new SectionViewModel('Selected Pubs', 'selection');
+            selectedPubs.sectionItems([
+                new SectionItemViewModel(1, "Pub 1"),
+                new SectionItemViewModel(2, "Pub 2"),
+                new SectionItemViewModel(3, "Pub 3")                
+            ]);
 
             this.availableSections = ko.observableArray([
               new SectionViewModel('Publications'),
               new SectionViewModel('Honors'),
               new SectionViewModel('Education'),
               new SectionViewModel('Text Section', 'text', true, 'default text'),
-              new SectionViewModel('Selected Pubs', 'selection')              
+              selectedPubs
             ]);
 
             this.selectedSections = ko.observableArray([]);
-
             this.editingSetion = ko.observable();
 
 
+            //this.load = function () {
+            //    var mapping = {
+            //        editable: ko.computed(function () {
+            //            return this.editor().length > 0;
+            //        }, this)
+            //    };
+                
+            //    $.getJSON('data/sections.json', {}, function (data) {
+
+            //        ko.mapping.fromJS(data, mapping);
+            //    });
+            //};
+
             this.itemDragged = function (item, e, ui) {
                 console.log('item dragged');
-
-
-                var newItem = new SectionViewModel(item.title(), item.editor, item.canChangeTitle(), item.sectionData());
-             
-                return newItem;
-
+                return createSectionViewModel(item);               
             };
-          
+
             this.editItem = function (item) {
                 console.log(item.editor);
 
