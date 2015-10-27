@@ -1,1 +1,54 @@
-﻿
+﻿[
+  {
+    "title": "Publications",
+    "editable": false,
+    "canChangeTitle": false,
+    "sectionText": ""
+  },
+  {
+    "title": "Honors",
+    "editable": false,
+    "canChangeTitle": false,
+    "sectionText": "",
+    "sectionItems": [ ]
+  },
+  {
+    "title": "Education",
+    "editable": false,
+    "canChangeTitle": false,
+    "sectionText": "",
+    "sectionItems": [ ]
+  },
+  {
+    "title": "Text Section",
+    "editor": "text",
+    "editable": true,
+    "sectionText": "default text",
+    "canChangeTitle": true,
+    "sectionItems": [ ]
+  },
+  {
+    "title": "Selected Pubs",
+    "editor": "selection",
+    "editable": true,
+    "canChangeTitle": false,
+    "sectionText": "",
+    "sectionItems": [
+      {
+        "Id": 1,
+        "Name": "Pub 1",
+        "IsSelected": false
+      },
+      {
+        "Id": 2,
+        "Name": "Pub 2",
+        "IsSelected": false
+      },
+      {
+        "Id": 3,
+        "Name": "Pub 3",
+        "IsSelected": false
+      }
+    ]
+  }
+]

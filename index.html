@@ -11,8 +11,7 @@
     <script src="bower_components/knockout-sortable/build/knockout-sortable.js"></script>
     <script src="bower_components/knockout-mapping/knockout.mapping.js"></script>
     <style>
-        
-        pre{
+        pre {
             width: 90%;
         }
 
@@ -67,7 +66,7 @@
                     <textarea class="form-control" data-bind="value: sectionText"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>                    
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -88,116 +87,67 @@
                             <input type="checkbox" data-bind="checked: $data.IsSelected" />
                             <span data-bind="text: $data.Name"></span>
                         </li>
-                    </ul>               
+                    </ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>                    
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-  
+
 
     <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
-    <script>
-
-        function SectionItemViewModel(id, name) {
-            this.Id = id;
-            this.Name = name;
-            this.IsSelected = ko.observable(false);
-        }
-
-        function SectionViewModel(title, editor, canChangeTitle, sectionText) {
-            if (canChangeTitle == null)
-                canChangeTitle = false;
-
-            this.title = ko.observable(title);
-            this.editor = editor;
-            this.editable = editor != null;
-            this.sectionText = ko.observable(sectionText);
-            this.canChangeTitle = ko.observable(canChangeTitle);
-
-            this.sectionItems = ko.observableArray([]);
-
-        }
-
+    <script>      
         function DocViewModel() {
             var self = this;
 
-            function createSectionViewModel(item) {
-
-                var newItem = new SectionViewModel(item.title(), item.editor, item.canChangeTitle(), item.sectionText());
-
-                if (item.sectionItems != null) {
-
-                    var sectionItems = item.sectionItems();
-
-                    for (var i = 0; i < sectionItems.length; i++) {
-                        var sectionItem = sectionItems[i];
-
-                        newItem.sectionItems.push(
-                            new SectionItemViewModel(sectionItem.Id,  sectionItem.Name)
-                        );
-                    }
-                }
-                    //newItem.sectionItems(item.sectionItems());
-
-                return newItem;
-
-            }
-
-            var selectedPubs = new SectionViewModel('Selected Pubs', 'selection');
-            selectedPubs.sectionItems([
-                new SectionItemViewModel(1, "Pub 1"),
-                new SectionItemViewModel(2, "Pub 2"),
-                new SectionItemViewModel(3, "Pub 3")                
-            ]);
-
-            this.availableSections = ko.observableArray([
-              new SectionViewModel('Publications'),
-              new SectionViewModel('Honors'),
-              new SectionViewModel('Education'),
-              new SectionViewModel('Text Section', 'text', true, 'default text'),
-              selectedPubs
-            ]);
-
+            this.availableSections = ko.observableArray([]);
             this.selectedSections = ko.observableArray([]);
             this.editingSetion = ko.observable();
 
 
-            //this.load = function () {
-            //    var mapping = {
-            //        editable: ko.computed(function () {
-            //            return this.editor().length > 0;
-            //        }, this)
-            //    };
-                
-            //    $.getJSON('data/sections.json', {}, function (data) {
+            this.load = function () {
+                var mapping = {
+                    editable: ko.computed(function () {
+                        return this.editor != null;
+                    }, this)
+                };
 
-            //        ko.mapping.fromJS(data, mapping);
-            //    });
-            //};
+                $.getJSON('data/sections.json?t=' + new Date().getMilliseconds(), {},
+                    function (data) {
+                        console.log('done');
+                        var sections = ko.mapping.fromJS(data); //, mapping);
+                        self.availableSections(sections());                     
+                    });
+                    //.success(function (data) {
+                    //    console.log('sucsses');
+                    //});
+            };
 
             this.itemDragged = function (item, e, ui) {
                 console.log('item dragged');
-                return createSectionViewModel(item);               
+
+                return ko.mapping.fromJSON(ko.toJSON(item));
             };
 
             this.editItem = function (item) {
-                console.log(item.editor);
+                console.log(item.editor());
 
                 self.editingSetion(item);
 
-                $('#modal-' + item.editor).modal('show');
+                $('#modal-' + item.editor()).modal('show');
             };
 
         }
 
         var viewModel = new DocViewModel();
-
         ko.applyBindings(viewModel);
+        viewModel.load();
+
+     
     </script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 </body>
