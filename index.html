@@ -119,45 +119,17 @@
 
             this.editingSetion = ko.observable();
 
-            //this.beforeMove = function (item, e, ui) {
-            //    console.log('before move');
-
-            //    //item.cancelDrop = true;
-
-            //    //var newItem = new SectionViewModel(item.item.title(), item.item.editor, item.item.canChangeTitle(), item.item.sectionData());
-            //    //self.selectedSections.push(newItem);
-
-            //}
 
             this.itemDragged = function (item, e, ui) {
-                //return $(item).clone();
                 console.log('item dragged');
 
 
                 var newItem = new SectionViewModel(item.title(), item.editor, item.canChangeTitle(), item.sectionData());
-                //self.selectedSections.push(newItem);
-
+             
                 return newItem;
 
-                //return item;
             };
-
-            //this.itemDragged = function (item, e, ui) {
-
-            //    console.log('item dragged...');
-                
-            //    //var newItem;
-
-            //    //ko.utils.objectMap(item, newItem);
-
-            //    //self.selectedSections.push(newItem);
-
-            //    //e.preventDefault();
-
-            //    //return $(item).clone();
-
-            //};
-
+          
             this.editItem = function (item) {
                 console.log(item.editor);
 
