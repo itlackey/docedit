@@ -11,17 +11,12 @@
     <script src="bower_components/knockout-sortable/build/knockout-sortable.js"></script>
     <script src="bower_components/knockout-mapping/knockout.mapping.js"></script>
     <style>
-        pre {
-            width: 90%;
-        }
-
         .draggable-list-item {
             cursor: pointer;
             z-index: 1001;
         }
 
-        .drop-list-group {
-            /*padding: 50px;*/
+        .drop-list-group {            
             padding-top: 250px;
             background-color: #808080;
         }
@@ -68,9 +63,9 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
 
 
     <div id="modal-selection" class="modal fade" data-bind="with: editingSetion">
@@ -92,15 +87,16 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-
+            </div>
+        </div>
+    </div>
 
     <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
-    <script>      
+
+
+
+    <script>
         function DocViewModel() {
             var self = this;
 
@@ -108,46 +104,30 @@
             this.selectedSections = ko.observableArray([]);
             this.editingSetion = ko.observable();
 
-
             this.load = function () {
-                var mapping = {
-                    editable: ko.computed(function () {
-                        return this.editor != null;
-                    }, this)
-                };
-
-                $.getJSON('data/sections.json?t=' + new Date().getMilliseconds(), {},
-                    function (data) {
-                        console.log('done');
-                        var sections = ko.mapping.fromJS(data); //, mapping);
-                        self.availableSections(sections());                     
+                $.getJSON('data/sections.json?t=' + new Date().getMilliseconds())
+                    .success(function (data) {
+                        var sections = ko.mapping.fromJS(data);
+                        self.availableSections(sections());
+                    })
+                    .error(function () {
+                        alert('Could not load viewmodel data.');
                     });
-                    //.success(function (data) {
-                    //    console.log('sucsses');
-                    //});
             };
 
             this.itemDragged = function (item, e, ui) {
-                console.log('item dragged');
-
                 return ko.mapping.fromJSON(ko.toJSON(item));
             };
 
             this.editItem = function (item) {
-                console.log(item.editor());
-
                 self.editingSetion(item);
-
                 $('#modal-' + item.editor()).modal('show');
             };
-
         }
 
         var viewModel = new DocViewModel();
         ko.applyBindings(viewModel);
         viewModel.load();
-
-     
     </script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 </body>

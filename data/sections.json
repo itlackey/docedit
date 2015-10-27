@@ -48,6 +48,11 @@
         "Id": 3,
         "Name": "Pub 3",
         "IsSelected": false
+      },
+      {
+        "Id": 4,
+        "Name": "Pubtastic 4",
+        "IsSelected": false
       }
     ]
   }

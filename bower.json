@@ -23,8 +23,7 @@
     "jqueryui": "~1.11.4",
     "knockout": "~3.3.0",
     "knockout-sortable": "~0.11.0",
-    "knockout-mapping": "~2.4.1",
-    "lodash": "~3.10.1",
+    "knockout-mapping": "~2.4.1",    
     "bootstrap": "~3.3.5"
   }
 }
