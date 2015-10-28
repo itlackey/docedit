@@ -16,7 +16,7 @@
   },
   {
     "title": "Education",
-    "title": "Education",
+    "type": "Education",
     "editable": false,
     "canChangeTitle": false,
     "sectionText": "",
