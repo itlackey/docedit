@@ -1,18 +1,21 @@
 ﻿[
   {
     "title": "Publications",
+    "type": "Publications",
     "editable": false,
     "canChangeTitle": false,
     "sectionText": ""
   },
   {
     "title": "Honors",
+    "type": "Honors",
     "editable": false,
     "canChangeTitle": false,
     "sectionText": "",
     "sectionItems": [ ]
   },
   {
+    "title": "Education",
     "title": "Education",
     "editable": false,
     "canChangeTitle": false,
@@ -21,6 +24,7 @@
   },
   {
     "title": "Text Section",
+    "type": "Text Section",
     "editor": "text",
     "editable": true,
     "sectionText": "default text",
@@ -29,6 +33,7 @@
   },
   {
     "title": "Selected Pubs",
+    "type": "Selected Pubs",
     "editor": "selection",
     "editable": true,
     "canChangeTitle": false,

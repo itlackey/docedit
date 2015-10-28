@@ -16,7 +16,7 @@
             z-index: 1001;
         }
 
-        .drop-list-group {            
+        .drop-list-group {
             padding-top: 250px;
             background-color: #808080;
         }
@@ -40,8 +40,15 @@
                 <div class="panel-body" style="padding: 0">
                     <ul id="selectedSections" data-bind="sortable: { data: selectedSections, dragged: itemDragged}" class="list-group drop-list-group" style="margin: 5px; padding: 5px;">
                         <li class="list-group-item">
-                            <span data-bind="text: title"></span>
-                            <button class="pull-right" data-bind="visible: editable, click: $root.editItem">edit</button>
+                            <div  data-bind="if: !editable()">
+                                <input type="text" data-bind="value: title" class="form-control" />
+                            </div>                            
+                            <div class="input-group" data-bind="if: editable">
+                                <input type="text" data-bind="value: title" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" data-bind="click: $root.editItem">edit</button>
+                                </span>
+                            </div>
                         </li>
                     </ul>
                 </div>
